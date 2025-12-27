@@ -44,6 +44,7 @@
                 radial-gradient(circle at 80% 70%, rgba(236, 72, 153, 0.3) 0%, transparent 50%),
                 radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.2) 0%, transparent 50%),
                 linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 100%);
+            pointer-events: none !important;
         }
 
         .stars {
@@ -53,6 +54,7 @@
             width: 100%;
             height: 100%;
             z-index: 1;
+            pointer-events: none !important;
         }
 
         .star {
@@ -72,6 +74,7 @@
             top: 0;
             left: 0;
             z-index: 2;
+            pointer-events: none !important;
         }
 
         .container {
@@ -349,6 +352,11 @@
             flex-direction: column;
             align-items: center;
             position: relative;
+            pointer-events: none;
+        }
+        
+        .cake-section > * {
+            pointer-events: auto;
         }
 
         .cake-title {
@@ -367,7 +375,6 @@
             width: 500px;
             height: 450px;
             transform-style: preserve-3d;
-            animation: rotateCake 20s linear infinite;
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
@@ -435,12 +442,13 @@
         /* Advanced Candles */
         .candles-container {
             position: absolute;
-            top: 180px;
+            top: 210px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
             gap: 20px;
-            z-index: 10;
+            z-index: 999999 !important;
+            pointer-events: auto !important;
         }
 
         .candle {
@@ -451,16 +459,21 @@
             border-radius: 8px;
             box-shadow: 0 5px 15px rgba(255, 105, 180, 0.5);
             animation: candleSway 2s ease-in-out infinite;
-            cursor: pointer;
-            transition: transform 0.1s ease;
+            cursor: pointer !important;
+            transition: transform 0.1s ease, filter 0.2s ease;
+            z-index: 999999 !important;
+            user-select: none;
+            pointer-events: auto !important;
         }
 
         .candle:hover {
-            transform: scale(1.1);
+            transform: scale(1.2) !important;
+            filter: brightness(1.3);
+            box-shadow: 0 8px 25px rgba(255, 105, 180, 0.8);
         }
 
         .candle:active {
-            transform: scale(0.95);
+            transform: scale(1.1) !important;
         }
 
         .candle:nth-child(2) { background: linear-gradient(to bottom, #87ceeb, #4682b4); animation-delay: 0.2s; }
@@ -505,6 +518,80 @@
             transform: translateX(-50%) translateY(-50px) scale(0);
         }
 
+        /* Smoke puff effect */
+        .candle.blown-out::after {
+            content: '';
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle, rgba(150, 150, 150, 0.8) 0%, rgba(200, 200, 200, 0.3) 50%, transparent 100%);
+            border-radius: 50%;
+            animation: smokeRise 2s ease-out forwards;
+        }
+
+        /* Smoke trail */
+        .candle.blown-out::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 3px;
+            height: 40px;
+            background: linear-gradient(to top, rgba(150, 150, 150, 0.5), transparent);
+            animation: smokeTrail 1.5s ease-out forwards;
+        }
+
+        /* Ember glow when blown out */
+        .candle.blown-out {
+            box-shadow: 
+                0 -5px 20px rgba(255, 100, 0, 0.8),
+                0 5px 15px rgba(255, 105, 180, 0.5);
+            animation: emberGlow 1s ease-out forwards;
+        }
+
+        @keyframes smokeRise {
+            0% {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0) scale(0.5);
+            }
+            100% {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-50px) scale(2);
+            }
+        }
+
+        @keyframes smokeTrail {
+            0% {
+                opacity: 1;
+                height: 40px;
+            }
+            100% {
+                opacity: 0;
+                height: 60px;
+            }
+        }
+
+        @keyframes emberGlow {
+            0% {
+                box-shadow: 
+                    0 -5px 30px rgba(255, 100, 0, 1),
+                    0 5px 15px rgba(255, 105, 180, 0.5);
+            }
+            50% {
+                box-shadow: 
+                    0 -5px 20px rgba(255, 100, 0, 0.5),
+                    0 5px 15px rgba(255, 105, 180, 0.5);
+            }
+            100% {
+                box-shadow: 
+                    0 5px 15px rgba(255, 105, 180, 0.5);
+            }
+        }
+
         /* Floating Elements */
         .floating-elements {
             position: fixed;
@@ -512,7 +599,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            pointer-events: none;
+            pointer-events: none !important;
             z-index: 5;
         }
 
@@ -1022,11 +1109,11 @@
         <section class="cake-section reveal">
             <h2 class="cake-title">Make a Wish! 🎂</h2>
             <div class="candles-container" id="candles">
-                <div class="candle" onclick="blowCandle(this)"><div class="flame"></div></div>
-                <div class="candle" onclick="blowCandle(this)"><div class="flame"></div></div>
-                <div class="candle" onclick="blowCandle(this)"><div class="flame"></div></div>
-                <div class="candle" onclick="blowCandle(this)"><div class="flame"></div></div>
-                <div class="candle" onclick="blowCandle(this)"><div class="flame"></div></div>
+                <div class="candle" onclick="window.blowOutCandle(this, 0)"><div class="flame"></div></div>
+                <div class="candle" onclick="window.blowOutCandle(this, 1)"><div class="flame"></div></div>
+                <div class="candle" onclick="window.blowOutCandle(this, 2)"><div class="flame"></div></div>
+                <div class="candle" onclick="window.blowOutCandle(this, 3)"><div class="flame"></div></div>
+                <div class="candle" onclick="window.blowOutCandle(this, 4)"><div class="flame"></div></div>
             </div>
             <div class="cake-3d" id="cake">
                 <div class="cake-layer">
@@ -1215,45 +1302,147 @@
             }
         }
 
-        // Blow Candle - Improved version
-        let blownCandles = 0;
-        function blowCandle(candle) {
-            if (!candle.classList.contains('blown-out')) {
-                // Blow out the candle
-                candle.classList.add('blown-out');
-                blownCandles++;
+        // Create wind particles effect
+        function createWindEffect(candle) {
+            const rect = candle.getBoundingClientRect();
+            const colors = ['rgba(200, 200, 255, 0.6)', 'rgba(255, 255, 255, 0.8)', 'rgba(150, 200, 255, 0.7)'];
+            
+            for (let i = 0; i < 15; i++) {
+                const particle = document.createElement('div');
+                particle.style.position = 'fixed';
+                particle.style.left = rect.left + rect.width / 2 + 'px';
+                particle.style.top = rect.top + 'px';
+                particle.style.width = (Math.random() * 8 + 4) + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.borderRadius = '50%';
+                particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.pointerEvents = 'none';
+                particle.style.zIndex = '10000';
+                particle.style.boxShadow = '0 0 10px rgba(255, 255, 255, 0.8)';
                 
-                // Play blow sound effect (visual feedback)
-                candle.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    candle.style.transform = 'scale(1)';
-                }, 100);
+                document.body.appendChild(particle);
                 
-                // Check if all candles are blown
-                if (blownCandles === 5) {
-                    setTimeout(() => {
-                        launchConfetti();
-                        showMessage('🎉 All candles blown! Make a wish! 🎉');
-                        
-                        // Launch fireworks
-                        for (let i = 0; i < 5; i++) {
-                            setTimeout(() => {
-                                launchFirework(
-                                    Math.random() * window.innerWidth,
-                                    Math.random() * window.innerHeight * 0.7
-                                );
-                            }, i * 200);
-                        }
-                    }, 300);
-                }
-
-                // Relight after 5 seconds
-                setTimeout(() => {
-                    candle.classList.remove('blown-out');
-                    blownCandles--;
-                }, 5000);
+                const angle = (Math.random() - 0.5) * Math.PI / 3 - Math.PI / 2;
+                const velocity = Math.random() * 100 + 50;
+                const vx = Math.cos(angle) * velocity;
+                const vy = Math.sin(angle) * velocity;
+                
+                particle.animate([
+                    { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+                    { transform: `translate(${vx}px, ${vy}px) scale(0)`, opacity: 0 }
+                ], {
+                    duration: 800,
+                    easing: 'ease-out'
+                });
+                
+                setTimeout(() => particle.remove(), 800);
             }
         }
+        
+        // Create smoke particles
+        function createSmokeParticles(candle) {
+            const rect = candle.getBoundingClientRect();
+            
+            for (let i = 0; i < 8; i++) {
+                const smoke = document.createElement('div');
+                smoke.style.position = 'fixed';
+                smoke.style.left = rect.left + rect.width / 2 + 'px';
+                smoke.style.top = rect.top + 'px';
+                smoke.style.width = (Math.random() * 20 + 15) + 'px';
+                smoke.style.height = smoke.style.width;
+                smoke.style.borderRadius = '50%';
+                smoke.style.background = 'radial-gradient(circle, rgba(150, 150, 150, 0.6), rgba(200, 200, 200, 0.2))';
+                smoke.style.pointerEvents = 'none';
+                smoke.style.zIndex = '9999';
+                smoke.style.filter = 'blur(3px)';
+                
+                document.body.appendChild(smoke);
+                
+                const offsetX = (Math.random() - 0.5) * 30;
+                const offsetY = -Math.random() * 80 - 40;
+                
+                smoke.animate([
+                    { transform: 'translate(0, 0) scale(0.5)', opacity: 0.8 },
+                    { transform: `translate(${offsetX}px, ${offsetY}px) scale(2)`, opacity: 0 }
+                ], {
+                    duration: 1500 + Math.random() * 500,
+                    easing: 'ease-out'
+                });
+                
+                setTimeout(() => smoke.remove(), 2000);
+            }
+        }
+
+        // SIMPLE CANDLE BLOW - ALL BLOW OUT TOGETHER
+        window.blownCandlesCount = 0;
+        window.allCandles = null;
+        
+        // Initialize candles array
+        setTimeout(function() {
+            window.allCandles = document.querySelectorAll('.candle');
+            console.log('Found', window.allCandles.length, 'candles');
+        }, 500);
+        
+        window.blowOutCandle = function(clickedCandle, index) {
+            console.log('🔥 Candle', index + 1, 'clicked!');
+            
+            if (clickedCandle.classList.contains('blown-out')) {
+                console.log('Already blown out!');
+                return;
+            }
+            
+            // Blow out ALL candles at once
+            window.allCandles.forEach(function(candle, i) {
+                if (!candle.classList.contains('blown-out')) {
+                    // Blow it out
+                    candle.classList.add('blown-out');
+                    
+                    // Effects with slight delay for each candle
+                    setTimeout(function() {
+                        try {
+                            createWindEffect(candle);
+                            setTimeout(function() { 
+                                createSmokeParticles(candle); 
+                            }, 100);
+                        } catch(e) {
+                            console.log('Effect error:', e);
+                        }
+                    }, i * 100); // Stagger effects
+                }
+            });
+            
+            window.blownCandlesCount = 5;
+            console.log('💨 All candles blown out!');
+            
+            // Celebration
+            setTimeout(function() {
+                try {
+                    launchConfetti();
+                    showMessage('🎉 All candles blown! Your wish will come true! 🎉');
+                    
+                    // Launch fireworks
+                    for (let i = 0; i < 8; i++) {
+                        setTimeout(function() {
+                            launchFirework(
+                                Math.random() * window.innerWidth,
+                                Math.random() * window.innerHeight * 0.7
+                            );
+                        }, i * 300);
+                    }
+                } catch(e) {
+                    console.log('Celebration error:', e);
+                }
+            }, 800);
+            
+            // Relight ALL candles after 5 seconds
+            setTimeout(function() {
+                window.allCandles.forEach(function(candle) {
+                    candle.classList.remove('blown-out');
+                });
+                window.blownCandlesCount = 0;
+                console.log('🔥 All candles relit!');
+            }, 5000);
+        };
 
         // Confetti Explosion
         function launchConfetti() {
@@ -1350,18 +1539,23 @@
         // Music Control
         let isPlaying = false;
         const musicBtn = document.getElementById('musicBtn');
-        const audio = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
+        const audio = new Audio('birthday-song.mp3'); // Your custom song file
         audio.loop = true;
+        audio.volume = 0.5; // 50% volume by default
 
         musicBtn.addEventListener('click', () => {
             if (isPlaying) {
                 audio.pause();
                 musicBtn.textContent = '🎵';
+                isPlaying = false;
             } else {
-                audio.play();
+                audio.play().catch(function(error) {
+                    console.log('Audio play failed:', error);
+                    alert('Please click the music button again to play the song!');
+                });
                 musicBtn.textContent = '🔇';
+                isPlaying = true;
             }
-            isPlaying = !isPlaying;
         });
 
         // Confetti Button
