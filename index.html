@@ -1376,6 +1376,7 @@
         // SIMPLE CANDLE BLOW - ALL BLOW OUT TOGETHER
         window.blownCandlesCount = 0;
         window.allCandles = null;
+        window.isBirthdayTime = false; // Flag to check if birthday has arrived
         
         // Initialize candles array
         setTimeout(function() {
@@ -1385,6 +1386,13 @@
         
         window.blowOutCandle = function(clickedCandle, index) {
             console.log('🔥 Candle', index + 1, 'clicked!');
+            
+            // Check if it's birthday time yet
+            if (!window.isBirthdayTime) {
+                showMessage('⏰ Wait for the countdown to reach zero! The birthday hasn\'t arrived yet! 🎂');
+                console.log('❌ Cannot blow candles yet - birthday hasn\'t arrived!');
+                return;
+            }
             
             if (clickedCandle.classList.contains('blown-out')) {
                 console.log('Already blown out!');
@@ -1604,11 +1612,13 @@
 
             if (distance < 0) {
                 // Birthday has arrived!
+                window.isBirthdayTime = true; // Enable candle blowing
+                
                 document.getElementById('days').textContent = '00';
                 document.getElementById('hours').textContent = '00';
                 document.getElementById('minutes').textContent = '00';
                 document.getElementById('seconds').textContent = '00';
-                document.getElementById('countdownMessage').textContent = '🎉 Happy Birthday Riya! 🎂';
+                document.getElementById('countdownMessage').textContent = '🎉 Happy Birthday Riya! 🎂 Click the candles!';
                 
                 // Launch celebration
                 if (!window.birthdayCelebrated) {
